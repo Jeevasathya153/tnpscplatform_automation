@@ -1,0 +1,69 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [ main ]
+
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  test:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        include:
+          - name: signIn
+            file: tests/signInTest.spec.js
+
+          - name: signUp
+            file: tests/signUpTest.spec.js
+
+          - name: books
+            file: tests/booksTest.spec.js
+
+          - name: contest
+            file: tests/contestTest.spec.js
+
+          - name: offlineBooks
+            file: tests/offlineBooksTest.spec.js
+
+          - name: subject
+            file: tests/subjectTest.spec.js
+
+          - name: logOut
+            file: tests/logOutTest.spec.js
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright test
+        run: npx playwright test ${{ matrix.file }} --project=chromium --reporter=html
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-${{ matrix.name }}
+          path: playwright-report/
+          retention-days: 30
+
