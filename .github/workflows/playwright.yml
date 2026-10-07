@@ -66,4 +66,3 @@ jobs:
           name: report-${{ matrix.name }}
           path: playwright-report/
           retention-days: 30
-
