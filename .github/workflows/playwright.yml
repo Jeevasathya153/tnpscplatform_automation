@@ -36,8 +36,8 @@ jobs:
           - name: subject
             file: tests/subjectTest.spec.js
 
-          # - name: logOut
-          #   file: tests/logOutTest.spec.js
+          - name: logOut
+            file: tests/logOutTest.spec.js
 
     steps:
 
