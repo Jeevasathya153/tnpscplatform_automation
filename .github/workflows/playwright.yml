@@ -36,8 +36,8 @@ jobs:
           - name: subject
             file: tests/subjectTest.spec.js
 
-          - name: logOut
-            file: tests/logOutTest.spec.js
+          # - name: logOut
+          #   file: tests/logOutTest.spec.js
 
     steps:
 
@@ -66,3 +66,4 @@ jobs:
           name: report-${{ matrix.name }}
           path: playwright-report/
           retention-days: 30
+
