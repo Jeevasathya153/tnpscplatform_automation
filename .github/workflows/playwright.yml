@@ -72,7 +72,7 @@ name: Playwright Tests
 on:
   # Run automatically every day at 9:00 AM IST
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '15 2 * * *'
       timezone: 'Asia/Kolkata'
 
   # Run when code is pushed to main
