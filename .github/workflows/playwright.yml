@@ -1,20 +1,100 @@
+# name: Playwright Tests
+
+# on:
+#   push:
+#     branches: [ main ]
+
+#   pull_request:
+#     branches: [ main ]
+
+# jobs:
+#   test:
+
+#     runs-on: ubuntu-latest
+
+#     strategy:
+#       fail-fast: false
+
+#       matrix:
+#         include:
+#           - name: signIn
+#             file: tests/signInTest.spec.js
+
+#           - name: signUp
+#             file: tests/signUpTest.spec.js
+
+#           - name: books
+#             file: tests/booksTest.spec.js
+
+#           - name: contest
+#             file: tests/contestTest.spec.js
+
+#           - name: offlineBooks
+#             file: tests/offlineBooksTest.spec.js
+
+#           - name: subject
+#             file: tests/subjectTest.spec.js
+
+#           - name: logOut
+#             file: tests/logOutTest.spec.js
+
+#     steps:
+
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 20
+#           cache: npm
+
+#       - name: Install dependencies
+#         run: npm ci
+
+#       - name: Install Playwright browsers
+#         run: npx playwright install --with-deps chromium
+
+#       - name: Run Playwright test
+#         run: npx playwright test ${{ matrix.file }} --project=chromium --reporter=html
+
+#       - name: Upload Playwright report
+#         if: always()
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: report-${{ matrix.name }}
+#           path: playwright-report/
+#           retention-days: 30
+
+
 name: Playwright Tests
 
 on:
-  push:
-    branches: [ main ]
+  # Run automatically every day at 9:00 AM IST
+  schedule:
+    - cron: '42 1 * * *'
+      timezone: 'Asia/Kolkata'
 
+  # Run when code is pushed to main
+  push:
+    branches:
+      - main
+
+  # Run when a pull request targets main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+
+  # Allow manual execution from GitHub Actions
+  workflow_dispatch:
 
 jobs:
   test:
-
+    name: Test - ${{ matrix.name }}
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
-
       matrix:
         include:
           - name: signIn
@@ -39,7 +119,6 @@ jobs:
             file: tests/logOutTest.spec.js
 
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -52,11 +131,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
+      - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
       - name: Run Playwright test
-        run: npx playwright test ${{ matrix.file }} --project=chromium --reporter=html
+        run: npx playwright test "${{ matrix.file }}" --project=chromium --reporter=html
 
       - name: Upload Playwright report
         if: always()
@@ -64,5 +143,5 @@ jobs:
         with:
           name: report-${{ matrix.name }}
           path: playwright-report/
-          retention-days: 1
-
+          retention-days: 7
+          if-no-files-found: ignore
