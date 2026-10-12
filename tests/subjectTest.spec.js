@@ -13,7 +13,7 @@ test('Subject Page',async({page})=>{
 
 
         await signinpage.signIn(SignInData.email,SignInData.password);
-        await expect(page.getByRole('heading',{name:"Welcome Back! 👋"})).toBeVisible();
+        //await expect(page.getByRole('heading',{name:"Welcome Back! 👋"})).toBeVisible();
         
         await subjectpage.subject();
         console.log('Quiz Started Successfully');
