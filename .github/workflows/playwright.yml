@@ -74,7 +74,8 @@ on:
   push:
   pull_request:
   workflow_dispatch:
-
+  repository_dispatch:
+    types: [tnpsc-application-push]
 
 jobs:
   test:
@@ -86,22 +87,16 @@ jobs:
         include:
           - name: signIn
             file: tests/signInTest.spec.js
-
           - name: signUp
             file: tests/signUpTest.spec.js
-
           - name: books
             file: tests/booksTest.spec.js
-
           - name: contest
             file: tests/contestTest.spec.js
-
           - name: offlineBooks
             file: tests/offlineBooksTest.spec.js
-
           - name: subject
             file: tests/subjectTest.spec.js
-
           - name: logOut
             file: tests/logOutTest.spec.js
 
