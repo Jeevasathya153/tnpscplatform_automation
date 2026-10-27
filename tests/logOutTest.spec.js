@@ -9,8 +9,10 @@ test('Log Out Test',async({page})=>{
     const logOutPage=new LogOutPage(page);
 
     await page.goto('https://tnpsc-preparation-platform.vercel.app/');
+    
         await signinpage.signIn(SignInData.email,SignInData.password);
         console.log("Login Successfull");
+
         await logOutPage.logOut();
         console.log("Log Out Successfull");
 });

@@ -68,37 +68,39 @@
 
 
 
-name: Playwright Tests
+name: TNPSC Playwright Automation
 
 on:
   push:
+    branches:
+      - main
+
   pull_request:
-  workflow_dispatch:
-  repository_dispatch:
-    types: [tnpsc-application-push]
+    branches:
+      - main
+
+  schedule:
+    # Login tests - 5:00 AM IST
+    - cron: '30 23 * * *'
+
+    # Signup tests - 5:10 AM IST
+    - cron: '40 23 * * *'
+
+    # Contest tests - 5:20 AM IST
+    - cron: '50 23 * * *'
+
+    # Books tests - 0:00 AM UTC / 5:30 AM IST
+    - cron: '0 0 * * *'
+
+    # Offline Books tests - 5:40 AM IST
+    - cron: '10 0 * * *'
+
+    # Subject and Quiz tests - 5:50 AM IST
+    - cron: '20 0 * * *'
 
 jobs:
-  test:
+  playwright-testing:
     runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: signIn
-            file: tests/signInTest.spec.js
-          - name: signUp
-            file: tests/signUpTest.spec.js
-          - name: books
-            file: tests/booksTest.spec.js
-          - name: contest
-            file: tests/contestTest.spec.js
-          - name: offlineBooks
-            file: tests/offlineBooksTest.spec.js
-          - name: subject
-            file: tests/subjectTest.spec.js
-          - name: logOut
-            file: tests/logOutTest.spec.js
 
     steps:
       - name: Checkout repository
@@ -107,7 +109,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -116,13 +118,34 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Run Playwright test
-        run: npx playwright test "${{ matrix.file }}" --project=chromium --reporter=html
+      - name: Run Login tests
+        if: github.event_name != 'schedule' || github.event.schedule == '30 23 * * *'
+        run: npx playwright test tests/signInTest.spec.js --project=chromium
+
+      - name: Run Signup tests
+        if: github.event_name != 'schedule' || github.event.schedule == '40 23 * * *'
+        run: npx playwright test tests/signUpTest.spec.js --project=chromium
+
+      - name: Run Contest tests
+        if: github.event_name != 'schedule' || github.event.schedule == '50 23 * * *'
+        run: npx playwright test tests/contestTest.spec.js --project=chromium
+
+      - name: Run Books tests
+        if: github.event_name != 'schedule' || github.event.schedule == '0 0 * * *'
+        run: npx playwright test tests/booksTest.spec.js --project=chromium
+
+      - name: Run Offline Books tests
+        if: github.event_name != 'schedule' || github.event.schedule == '10 0 * * *'
+        run: npx playwright test tests/offlineBooksTest.spec.js --project=chromium
+
+      - name: Run Subject and Quiz tests
+        if: github.event_name != 'schedule' || github.event.schedule == '20 0 * * *'
+        run: npx playwright test tests/subjectTest.spec.js --project=chromium
 
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: report-${{ matrix.name }}
+          name: tnpsc-playwright-report
           path: playwright-report/
           retention-days: 30
